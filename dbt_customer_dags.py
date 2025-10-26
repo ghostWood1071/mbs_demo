@@ -60,7 +60,7 @@ DBT_PROFILE_DICT = {
     }
 }
 
-project_cfg = ProjectConfig(project_path=PROJECT_DIR)
+project_cfg = ProjectConfig(dbt_project_path=PROJECT_DIR)
 profile_cfg = ProfileConfig.from_dict("spark_profile", "prod", DBT_PROFILE_DICT)
 exec_cfg = ExecutionConfig(dbt_executable_path="dbt")
 
