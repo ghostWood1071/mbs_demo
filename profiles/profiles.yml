@@ -1,0 +1,46 @@
+spark_profile:
+  target: prod
+  outputs:
+    prod:
+      type: spark
+      method: session
+      schema: default          # dbt models sẽ đặt schema theo config của bạn (vd: silver/gold)
+      threads: 4
+
+      # ⭐ Spark on Kubernetes (driver = Airflow task pod)
+      spark_conf:
+        spark.master: "k8s://https://kubernetes.default.svc"
+        spark.submit.deployMode: "client"              # sửa từ 'cluster' -> 'client' cho method=session
+        spark.kubernetes.namespace: "compute"
+        spark.kubernetes.authenticate.driver.serviceAccountName: "spark"
+
+        # Ảnh executors (nên có cùng libs với driver)
+        spark.kubernetes.container.image: "ghostwood/spark-delta-samp-job:latest"
+
+        # Tài nguyên executors
+        spark.executor.instances: "2"
+        spark.executor.cores: "1"
+        spark.executor.memory: "2g"
+        spark.kubernetes.executor.deleteOnTermination: "true"
+
+        # ⭐ Hive catalog + Delta
+        spark.sql.catalogImplementation: "hive"
+        hive.metastore.uris: "thrift://hive-metastore.metastore.svc.cluster.local:9083"  # <— ĐIỀN namespace thật
+        spark.sql.warehouse.dir: "s3a://warehouse/"
+        spark.sql.extensions: "io.delta.sql.DeltaSparkSessionExtension"
+        spark.sql.catalog.spark_catalog: "org.apache.spark.sql.delta.catalog.DeltaCatalog"
+
+        # ⭐ MinIO (S3A)
+        spark.hadoop.fs.s3a.endpoint: "http://minio.storage.svc.cluster.local:9000"
+        spark.hadoop.fs.s3a.path.style.access: "true"
+        spark.hadoop.fs.s3a.aws.credentials.provider: "org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider"
+        spark.hadoop.fs.s3a.access.key: "minioadmin"
+        spark.hadoop.fs.s3a.secret.key: "minio@demo!"
+
+        # Ổn định / hiệu năng (tuỳ chọn)
+        spark.network.timeout: "600s"
+        spark.executor.heartbeatInterval: "60s"
+        spark.serializer: "org.apache.spark.serializer.KryoSerializer"
+        spark.sql.adaptive.enabled: "true"
+        spark.jars.packages: "io.delta:delta-spark_2.12:3.2.0,org.apache.hadoop:hadoop-aws:3.3.4,org.postgresql:postgresql:42.7.3,org.apache.hive:hive-metastore:3.1.3,org.apache.hive:hive-exec:3.1.3"
+        spark.driver.extraJavaOptions: "-Divy.cache.dir=/tmp -Divy.home=/tmp"
