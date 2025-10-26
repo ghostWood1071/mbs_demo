@@ -4,7 +4,7 @@ from cosmos import DbtDag
 from cosmos.config import ProjectConfig, ProfileConfig, ExecutionConfig
 
 
-PROJECT_DIR = "/opt/airflow/dags/mbs_demo/customer_dbt"
+PROJECT_DIR = "/opt/airflow/dags/mbs_demo"
 PROFILES_YML = "/opt/airflow/dags/mbs_demo/profiles/profiles.yml"
 
 # === Cosmos configs (API đúng) ===
