@@ -1,7 +1,7 @@
 from datetime import datetime
 from cosmos import DbtDag, ProjectConfig, ProfileConfig, ExecutionConfig
 
-PROJECT_DIR = "/opt/airflow/dags/mbs_demo"
+PROJECT_DIR = "/opt/airflow/dags/msb_demo"
 
 PACKAGES = ",".join([
     "io.delta:delta-spark_2.12:3.2.0",
