@@ -6,7 +6,7 @@ spark_profile:
       method: session
       schema: default          # dbt models sẽ đặt schema theo config của bạn (vd: silver/gold)
       threads: 4
-
+      host: "NA"
       # ⭐ Spark on Kubernetes (driver = Airflow task pod)
       spark_conf:
         spark.master: "k8s://https://kubernetes.default.svc"
